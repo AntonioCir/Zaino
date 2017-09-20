@@ -1,7 +1,15 @@
+/**
+ * 
+ * https://www.youtube.com/watch?v=B2L7NI32Qck&list=PLqRTLlwsxDL-sGeTwjwMlpE9xEa9TaElg&index=14
+ */
+
+
 package zaino;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Zaino 
 {
@@ -53,6 +61,72 @@ public class Zaino
 		Set<Pezzo> soluzione= z.risolvi();
 		
 		System.out.println(soluzione);
+		
+	}
+
+	/**
+	 * Calcola il costo di una soluzione parziale
+	 * @param parziale
+	 * @return
+	 */
+	private int costo(Set<Pezzo> parziale)
+	{
+		int r =0;
+		for (Pezzo p:parziale)
+		{
+			r += p.getCosto();
+		}
+		return r;
+	}
+	
+	private int peso(Set<Pezzo> parziale)
+	{
+		int r =0;
+		for (Pezzo p:parziale)
+		{
+			r += p.getPeso();
+		}
+		return r;
+	}
+	
+	private void scegli(Set<Pezzo> parziale, int livello, Set<Pezzo> best) 
+	{
+		if(costo(parziale) > costo(best))
+		{
+			// ho trovato una soluzione migliore
+			// devo salvarla in best
+			
+			best.clear();
+			best.addAll(parziale);
+			
+			System.out.println(best);
+		}
+		
+		for (Pezzo p:pezzi)
+		{
+			if (!parziale.contains(p))
+			{
+				//p non c'è ancora, provo a metterlo se non supera la capacità
+				if(peso(parziale)+ p.getPeso()<= capienza)
+				{
+					//provo a mettere p nello zaino
+					parziale.add(p);
+					//delego la ricerca al livello successivo
+					scegli(parziale, livello+1, best);
+					//poi rimetti le cose a posto (togli p)
+					parziale.remove(p);
+					
+				}
+			}
+		}
+	}
+	
+	private Set<Pezzo> risolvi() 
+	{
+		Set<Pezzo> parziale = new HashSet<Pezzo>();
+		Set<Pezzo> best = new HashSet<Pezzo>();
+		scegli(parziale,0,best);
+		return best;
 		
 	}
 
